@@ -2,5 +2,5 @@
 cmds = ["pnpm build"]
 
 [start]
-cmd = "" # Vacío para indicarle que es estático
-runImage = "ubuntu-22.04"
+cmd = "echo 'Static site compiled successfully'"
+runImage = "ubuntu:22.04"
