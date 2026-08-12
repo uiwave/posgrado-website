@@ -1,0 +1,6 @@
+[phases.build]
+cmds = ["pnpm build"]
+
+[start]
+cmd = "" # Vacío para indicarle que es estático
+runImage = "ubuntu-22.04"
