@@ -10,9 +10,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "start": "echo 'Static site compiled successfully'"
+    "start": "serve -s dist -l 4321"
   },
   "dependencies": {
-    "astro": "^7.2.1"
+    "astro": "^7.2.1",
+    "serve": "^14.2.6"
   }
 }
