@@ -1,6 +1,0 @@
-[phases.build]
-cmds = ["pnpm build"]
-
-[start]
-cmd = "echo 'Static site compiled successfully'"
-runImage = "ubuntu:22.04"
