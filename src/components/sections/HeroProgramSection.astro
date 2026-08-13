@@ -1,0 +1,47 @@
+---
+
+interface Props {
+    programa: string;
+}
+
+const { programa } = Astro.props;
+---
+
+<section
+    class="relative flex min-h-[60vh] w-full items-center justify-center overflow-hidden py-20 lg:py-28"
+>
+    <div class="absolute inset-0" aria-hidden="true">
+        <img
+            src={programa.imagen}
+            alt=""
+            class="size-full object-cover object-top"
+        />
+        <div class="bg-neutral-black/60 absolute inset-0"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto w-full px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-4xl space-y-6 text-center">
+            <nav
+                aria-label="Breadcrumb"
+                class="text-neutral-white/70 text-xs tracking-[0.2em] uppercase sm:text-sm"
+            >
+                <a
+                    href="/"
+                    class="hover:text-neutral-white transition-colors duration-300"
+                >
+                    Inicio
+                </a>
+                <span class="text-neutral-white/40 mx-2" aria-hidden="true"
+                    >/</span
+                >
+                <span class="text-secondary">{programa.titulo}</span>
+            </nav>
+
+            <h1
+                class="text-neutral-white font-display text-[clamp(2.5rem,7vw,5rem)] leading-none font-normal tracking-wide uppercase"
+            >
+                {programa.titulo}
+            </h1>
+        </div>
+    </div>
+</section>

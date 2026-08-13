@@ -1,0 +1,41 @@
+---
+import Logo from "@/assets/icons/logo.svg";
+import type { TipoProgramaResponse } from "@/types/api";
+
+interface Props {
+  estadisticas: TipoProgramaResponse[];
+}
+
+const { estadisticas } = Astro.props;
+---
+
+<section class="relative w-full overflow-hidden py-16 sm:py-20 lg:py-28">
+  <div class="absolute inset-0" aria-hidden="true">
+    <img src="/images/banner.jpg" alt="" class="size-full object-cover" />
+    <div class="bg-neutral-black/60 absolute inset-0"></div>
+  </div>
+
+  <div class="relative z-10 w-full">
+    <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div
+        class="text-neutral-white divide-neutral-white/20 flex flex-col divide-y lg:flex-row lg:divide-x lg:divide-y-0"
+      >
+        {
+          estadisticas.map((estadistica) => (
+            <div class="flex flex-1 flex-col items-center gap-2 px-6 py-8 text-center sm:py-10 lg:py-12">
+              <Logo class="text-neutral-white size-20 shrink-0" />
+
+              <p class="font-display text-[clamp(2.5rem,5vw,4rem)] leading-none">
+                15
+              </p>
+
+              <p class="font-display text-[clamp(1.25rem,3vw,1.75rem)] leading-tight tracking-wide uppercase">
+                {estadistica.nombre}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

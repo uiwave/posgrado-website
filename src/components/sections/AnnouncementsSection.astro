@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import AnnouncementCard from "@/components/ui/AnnouncementCard.astro";
+
+const announcements = await getCollection("announcements");
+---
+
+<section class="relative w-full overflow-hidden py-16 sm:py-20 lg:py-32">
+  <div class="relative z-10 w-full">
+    <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div class="space-y-10 lg:space-y-16">
+        <div
+          class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <div
+            class="mx-auto max-w-4xl space-y-4 text-center lg:mx-0 lg:text-left"
+          >
+            <h2
+              class="font-display text-primary text-[clamp(2rem,5vw,3.5rem)] leading-none font-normal tracking-wide uppercase"
+            >
+              Comunicados
+            </h2>
+          </div>
+
+          <div class="flex justify-center lg:justify-end">
+            <a
+              class="font-display inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] bg-primary text-neutral-white hover:bg-secondary min-h-12 px-6 py-3 text-sm sm:px-8"
+            >
+              Más Comunicados 
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="no-scrollbar grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          {
+            announcements.map((comunicado) => {
+              const { id, data } = comunicado;
+              const { title, image, date } = data;
+              return (
+                <AnnouncementCard
+                  title={title}
+                  image={image}
+                  date={date}
+                  href={`/comunicados/${id}`}
+                />
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

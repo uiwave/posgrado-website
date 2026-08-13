@@ -1,0 +1,46 @@
+---
+interface Props {
+  image: string;
+  title: string;
+  date: string;
+  href: string;
+}
+
+const { image, title, date, href } = Astro.props;
+---
+
+<article
+  class="group relative flex h-full flex-col justify-between overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1"
+>
+  <div>
+    <div class="relative aspect-4/3 overflow-hidden">
+      <img
+        src={image}
+        alt={title}
+        loading="lazy"
+        class="size-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+      />
+    </div>
+
+    <div class="space-y-3 p-5 sm:p-6">
+      <h3
+        class="font-display text-xl leading-tight tracking-wide uppercase sm:text-2xl"
+      >
+        {title}
+      </h3>
+
+      <time datetime={date} class="text-neutral-light block text-sm">
+        {date}
+      </time>
+    </div>
+  </div>
+
+  <div class="p-5 pt-0">
+    <a
+      href={href}
+      class="font-display inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] bg-primary text-neutral-white hover:bg-secondary min-h-10 px-4 py-2 text-xs sm:px-5"
+    >
+      Leer Más
+    </a>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+---
+import type { TipoProgramaResponse } from "@/types/api";
+
+interface Props {
+  programas: TipoProgramaResponse[];
+}
+
+const { programas } = Astro.props;
+---
+
+<section id="tipo-section-id" class="relative w-full overflow-hidden py-16 sm:py-20 lg:py-32">
+  <div class="relative z-10 w-full">
+    <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div class="space-y-10 lg:space-y-16">
+        <div class="mx-auto max-w-4xl space-y-4 text-center">
+          <h2
+            class="font-display text-primary text-[clamp(2rem,5vw,3.5rem)] leading-none font-normal tracking-wide uppercase"
+          >
+            Conoce Nuestros Programas
+          </h2>
+        </div>
+        <div
+          class="programas-cards mx-auto grid w-full max-w-6xl grid-cols-2 gap-3 sm:gap-5 lg:flex lg:h-100 lg:items-center lg:gap-6"
+        >
+          {
+            programas.map((programa) => (
+              <a
+                href={`/${programa.slug}`}
+                class="programa-card group relative block h-52 w-full overflow-hidden rounded-sm transition-all duration-500 sm:h-64 lg:h-100 lg:w-56 lg:grow lg:hover:w-full"
+              >
+                <img
+                  src={programa.imagenCard}
+                  alt={programa.nombre}
+                  class="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                />
+
+                <div class="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-transparent" />
+
+                <div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-6 lg:p-8">
+                  <h3 class="programa-title font-display text-lg leading-tight tracking-wide uppercase transition-all duration-500 sm:text-xl lg:text-2xl">
+                    {programa.nombre}
+                  </h3>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /*
+    |--------------------------------------------------------------------------
+    | DESKTOP
+    |--------------------------------------------------------------------------
+    | A partir de 1024px activamos el efecto de expansión.
+    */
+
+  @media (min-width: 1024px) {
+    /*
+        * Cuando alguna card está en hover,
+        * ocultamos los títulos de todas las cards.
+        */
+    .programas-cards:has(.programa-card:hover) .programa-title {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    /*
+        * La card actualmente seleccionada
+        * mantiene su título visible.
+        */
+    .programas-cards .programa-card:hover .programa-title {
+      opacity: 1;
+      transform: translateY(-4px);
+    }
+  }
+</style>

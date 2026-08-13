@@ -1,0 +1,30 @@
+---
+import type { ProgramaListItemResponse } from "@/types/api";
+
+interface Props {
+  programa: ProgramaListItemResponse;
+}
+
+const { programa } = Astro.props;
+---
+
+<a
+  href={`/programa/${programa.slug}`}
+  class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col justify-between"
+>
+  <div>
+    <div class="h-48 overflow-hidden bg-gray-100 relative">
+      <img
+        src={programa.imagen}
+        alt={`Imagen de ${programa.nombre}`}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </div>
+    <div class="p-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-2">
+        {programa.nombre}
+      </h2>
+    </div>
+  </div>
+</a>

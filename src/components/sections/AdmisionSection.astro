@@ -1,0 +1,114 @@
+---
+import Graduation from "@/assets/icons/graduation.svg";
+
+const VALUES = [
+  {
+    icon: Graduation,
+    title: "Inscripciones",
+    description: "Del 25 de junio al 11 de julio del 2026",
+  },
+  {
+    icon: Graduation,
+    title: "Costo por derecho de admisión",
+    description: "S/ 350.00",
+  },
+  {
+    icon: Graduation,
+    title: "Charla de inducción virtual",
+    description: "Viernes 12 de julio a las 20:00 horas",
+  },
+  {
+    icon: Graduation,
+    title: "Examen de admisión virtual",
+    description: "Sábado 13 de julio",
+  },
+];
+
+const cantidad = VALUES.length;
+
+const obtenerColumnas = (indice: number) => {
+  if (cantidad === 1) return "lg:col-span-6";
+
+  if (cantidad === 2) return "lg:col-span-3";
+
+  if (cantidad === 4) return "lg:col-span-3";
+
+  if (cantidad === 5 && indice >= 3) return "lg:col-span-3";
+
+  if (cantidad === 7 && indice === 6) return "lg:col-span-6";
+
+  if (cantidad === 8 && indice >= 6) return "lg:col-span-3";
+
+  return "lg:col-span-2";
+};
+---
+
+<section>
+  <div class="text-neutral-white grid lg:grid-cols-2">
+    <!-- Información -->
+    <div
+      class="admission-info relative flex flex-col items-center space-y-8 overflow-hidden px-5 py-12 sm:space-y-10 sm:px-8 sm:py-16 lg:space-y-12 lg:px-10 lg:py-16 xl:px-14"
+    >
+      <h2
+        class="font-display text-center text-[clamp(2rem,5vw,3.5rem)] leading-none font-normal tracking-wide uppercase"
+      >
+        PROCESO DE ADMISIÓN
+        <br />
+        <span>2026 - 1</span>
+      </h2>
+
+      <div class="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-6">
+        {
+          VALUES.map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <div
+                class:list={[
+                  "group hover:border-foreground/40 relative flex h-44 w-full flex-col items-center justify-center gap-3 p-4 text-center transition-colors sm:h-48 sm:p-5",
+                  "bg-neutral-white/10",
+                  obtenerColumnas(index),
+                ]}
+              >
+                <Icon class="size-8 transition-transform duration-300 group-hover:scale-110 sm:size-9" />
+
+                <div class="space-y-1.5">
+                  <h3 class="font-display text-secondary text-base tracking-wide uppercase sm:text-lg">
+                    {item.title}
+                  </h3>
+
+                  <p class="text-base leading-relaxed font-medium sm:text-lg">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+      <a
+        class="font-display inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] bg-secondary text-neutral-white hover:bg-primary min-h-12 px-6 py-3 text-sm sm:px-8"
+      >
+        Explora nuestros programas
+      </a>
+    </div>
+
+    <!-- Imagen -->
+    <div class="relative hidden h-72 w-full lg:block lg:h-auto">
+      <img
+        src="/images/admision.jpg"
+        alt=""
+        class="absolute inset-0 size-full object-cover"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .admission-info {
+    background-image: url("/images/rectangle.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+</style>

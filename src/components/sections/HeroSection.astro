@@ -1,0 +1,53 @@
+---
+import Graduation from "@/assets/icons/graduation.svg";
+import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/constants/routes";
+---
+
+<section
+  class="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-20 lg:py-28"
+>
+  <div class="absolute inset-0" aria-hidden="true">
+    <img src="/images/banner.jpg" alt="" class="size-full object-cover" />
+    <div class="bg-neutral-black/70 absolute inset-0"></div>
+  </div>
+  <div class="relative z-10 container mx-auto w-full px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl space-y-6 text-center lg:mx-0 lg:text-left">
+      <div
+        class="border-neutral-white/30 text-neutral-white inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs tracking-[0.2em] uppercase sm:text-sm"
+      >
+        <Graduation class="text-secondary size-4 shrink-0" />
+        Escuela de Posgrado · UNSAAC
+      </div>
+      <h1
+        class="text-neutral-white font-display text-[clamp(2.5rem,7vw,5rem)] leading-none font-normal text-balance uppercase"
+      >
+        LLEVA TU PROFESIÓN{" "}
+        <span class="text-secondary">AL SIGUIENTE NIVEL</span>
+      </h1>
+      <p
+        class="text-neutral-white/85 max-w-2xl text-base leading-relaxed font-medium text-pretty sm:text-lg"
+      >
+        Especialízate, investiga y transforma tu experiencia profesional con una
+        formación de posgrado respaldada por la Universidad Nacional de San
+        Antonio Abad del Cusco.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-4 lg:justify-start">
+        <a href="#tipo-section-id"
+          class="font-display inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] bg-primary text-neutral-white hover:bg-secondary min-h-12 px-6 py-3 text-sm sm:px-8"
+          >Explora nuestros programas</a
+        >
+        {
+          siteConfig.features.procesoAdmision && (
+            <a
+              href={ROUTES.ADMISION}
+              class="font-display inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] bg-secondary text-neutral-white hover:bg-primary min-h-12 px-6 py-3 text-sm sm:px-8"
+            >
+              Conoce la admisión
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
