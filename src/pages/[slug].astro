@@ -2,7 +2,11 @@
 import CardProgram from "@/components/ui/CardProgram.astro";
 import Layout from "../layouts/Layout.astro";
 import { posgradoService } from "../services/api";
-import type { PagedModel, ProgramaListItemResponse } from "../types/api";
+import type {
+  PagedModel,
+  ProgramaListItemResponse,
+  TipoProgramaResponse,
+} from "../types/api";
 import HeroProgramSection from "@/components/sections/HeroProgramSection.astro"
 
 // 1. Obtener el slug desde la URL
@@ -23,6 +27,7 @@ const urlPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
 const apiPage = urlPage - 1;
 
 let programasData: PagedModel<ProgramaListItemResponse> | null = null;
+let tiposPrograma: TipoProgramaResponse[] = [];
 let errorMensaje = "";
 
 try {
@@ -32,7 +37,7 @@ try {
       page: apiPage,
       size,
     });
-    
+    tiposPrograma = await posgradoService.getTiposPrograma();
   }
 } catch (error) {
   console.error(`Error al cargar programas para ${slug}:`, error);
@@ -64,9 +69,13 @@ const buildPageUrl = (targetPage: number, newSize?: number) => {
 
 
 const tituloCategoria = slug.replace(/-/g, " ");
+const tipoActual = tiposPrograma.find((t) => t.slug === slug);
+const heroTitulo = tipoActual?.nombre ?? tituloCategoria;
+const heroImagen = tipoActual?.imagenHero ?? "/images/banner.jpg";
 ---
 
 <Layout title={`Programas de ${tituloCategoria}`}>
+  <HeroProgramSection programa={{ titulo: heroTitulo, imagen: heroImagen }} />
   <main class="max-w-7xl mx-auto px-6 py-12">
     <!-- Encabezado y Buscador -->
     <header class="mb-8">
