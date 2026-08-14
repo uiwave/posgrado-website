@@ -1,0 +1,128 @@
+---
+import { posgradoService } from "@/services/api";
+import type {
+    PagedModel,
+    ProgramaListItemResponse,
+} from "@/types/api";
+import GridProgramasToolbar from "./GridProgramasToolbar.astro";
+import GridProgramasCards from "./GridProgramasCards.astro";
+import GridProgramasPaginacion from "./GridProgramasPaginacion.astro";
+
+interface Props {
+    slug: string;
+}
+
+const { slug } = Astro.props;
+
+const url = new URL(Astro.request.url);
+const q = url.searchParams.get("q") || "";
+const pageParam = url.searchParams.get("page");
+const sizeParam = url.searchParams.get("size");
+
+const parsedSize = sizeParam ? parseInt(sizeParam, 10) : 10;
+const size = ([5, 10, 20].includes(parsedSize) ? parsedSize : 10) as
+    | 5
+    | 10
+    | 20;
+
+const urlPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
+const apiPage = urlPage - 1;
+
+let programasData: PagedModel<ProgramaListItemResponse> | null = null;
+let errorMensaje = "";
+
+try {
+    programasData = await posgradoService.getProgramasPorTipo(slug, {
+        q: q.trim() ? q.trim() : undefined,
+        page: apiPage,
+        size,
+    });
+} catch (error) {
+    console.error(`Error al cargar programas para ${slug}:`, error);
+    errorMensaje = "No se pudieron obtener los programas para esta categoría.";
+}
+
+const buildPageUrl = (targetPage: number, newSize?: number) => {
+    const params = new URLSearchParams();
+    if (q.trim()) {
+        params.set("q", q.trim());
+    }
+
+    const activeSize = newSize ?? size;
+
+    if (targetPage > 1) {
+        params.set("page", targetPage.toString());
+    }
+    if (activeSize !== 10) {
+        params.set("size", activeSize.toString());
+    }
+
+    const queryString = params.toString();
+    return `/${slug}${queryString ? `?${queryString}` : ""}`;
+};
+
+const tituloCategoria = slug.replace(/-/g, " ");
+
+const totalCarreras = programasData?.page.totalElements ?? 0;
+const totalPaginas = programasData?.page.totalPages ?? 0;
+const inicio = totalCarreras > 0 ? (urlPage - 1) * size + 1 : 0;
+const fin = Math.min(urlPage * size, totalCarreras);
+const hayResultados =
+    programasData !== null &&
+    programasData.content.length > 0 &&
+    errorMensaje === "";
+---
+
+<section class="relative w-full py-16 sm:py-20 lg:py-28">
+    <div class="relative z-10 w-full">
+        <div class="container mx-auto w-full px-4 sm:px-6 lg:px-8">
+            <div class="space-y-10 lg:space-y-16">
+                <div class="mx-auto max-w-4xl space-y-4 text-center">
+                    <h2
+                        class="font-display text-primary text-[clamp(2rem,5vw,3.5rem)] leading-none font-normal tracking-wide uppercase"
+                    >
+                        Programas de {tituloCategoria}
+                    </h2>
+                </div>
+
+                {
+                    errorMensaje ? (
+                        <div
+                            class="border-secondary bg-secondary/10 text-neutral-dark mx-auto max-w-xl border-2 p-4 text-center"
+                            role="alert"
+                        >
+                            <p class="font-medium">{errorMensaje}</p>
+                        </div>
+                    ) : hayResultados ? (
+                        <>
+                            <GridProgramasToolbar
+                                q={q}
+                                size={size}
+                                inicio={inicio}
+                                fin={fin}
+                                totalCarreras={totalCarreras}
+                                buildPageUrl={buildPageUrl}
+                            />
+
+                            <GridProgramasCards
+                                programas={programasData!.content}
+                            />
+
+                            <GridProgramasPaginacion
+                                urlPage={urlPage}
+                                totalPaginas={totalPaginas}
+                                buildPageUrl={buildPageUrl}
+                            />
+                        </>
+                    ) : (
+                        <p class="text-neutral-dark text-center">
+                            {q
+                                ? `No se encontraron programas para «${q.trim()}».`
+                                : "No hay programas disponibles."}
+                        </p>
+                    )
+                }
+            </div>
+        </div>
+    </div>
+</section>
