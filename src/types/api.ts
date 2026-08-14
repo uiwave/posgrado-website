@@ -18,6 +18,7 @@ export interface TipoProgramaResponse {
   slug: string;
   imagenCard: string;
   imagenHero: string;
+  cantidadProgramas: number;
 }
 
 export interface NamedEntity {
