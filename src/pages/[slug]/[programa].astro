@@ -2,7 +2,9 @@
 import Layout from "../../layouts/Layout.astro";
 import { posgradoService } from "../../services/api";
 import type { ProgramaResponse } from "../../types/api";
-import Graduation from "@/assets/icons/graduation.svg";
+import ProgramHero from "@/components/sections/ProgramHero.astro";
+import ProgramTabs from "@/components/sections/ProgramTabs.astro";
+import CardPorImplementar from "@/components/ui/CardPorImplementar.astro";
 
 const { slug, programa } = Astro.params;
 
@@ -27,15 +29,6 @@ try {
   errorMensaje =
     "El programa solicitado no existe o no se encuentra disponible actualmente.";
 }
-
-const formatMoney = (amount?: number) => {
-  if (amount === undefined || amount === null) return "S/ 0.00";
-  return new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-    minimumFractionDigits: 2,
-  }).format(amount);
-};
 ---
 
 <Layout title={programaDetail?.nombre ?? "Programa no encontrado"}>
@@ -44,7 +37,7 @@ const formatMoney = (amount?: number) => {
       errorMensaje || !programaDetail ? (
         <div class="max-w-3xl mx-auto pt-20 px-6 text-center">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-            <div class="w-16 h-16 bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
               !
             </div>
             <h1 class="text-2xl font-bold text-gray-900 mb-2">
@@ -61,306 +54,16 @@ const formatMoney = (amount?: number) => {
         </div>
       ) : (
         <>
-          <!-- HERO -->
-          <section class="relative flex min-h-[45vh] w-full items-center justify-center overflow-hidden py-20 lg:py-28">
-            <div class="absolute inset-0" aria-hidden="true">
-              <img
-                src={programaDetail.imagen || programaDetail.tipoPrograma?.imagenHero || ""}
-                alt=""
-                class="size-full object-cover object-top"
-              />
-              <div class="bg-neutral-black/60 absolute inset-0"></div>
-            </div>
+          <ProgramHero programa={programaDetail} />
 
-            <div class="relative z-10 container mx-auto w-full px-4 sm:px-6 lg:px-8">
-              <div class="mx-auto max-w-5xl space-y-6 text-center">
-                <nav
-                  aria-label="Breadcrumb"
-                  class="text-neutral-white/70 text-xs tracking-[0.2em] uppercase sm:text-sm"
-                >
-                  <a href="/" class="hover:text-neutral-white transition-colors duration-300">
-                    Inicio
-                  </a>
-                  <span class="text-neutral-white/40 mx-2" aria-hidden="true">/</span>
-                  {programaDetail.tipoPrograma && (
-                    <>
-                      <a
-                        href={`/${programaDetail.tipoPrograma.slug}`}
-                        class="hover:text-neutral-white transition-colors duration-300"
-                      >
-                        {programaDetail.tipoPrograma.nombre}
-                      </a>
-                      <span class="text-neutral-white/40 mx-2" aria-hidden="true">/</span>
-                    </>
-                  )}
-                  <span class="text-secondary">{programaDetail.nombre}</span>
-                </nav>
-
-                <h1
-                  class="text-neutral-white font-display text-[clamp(2.5rem,7vw,4.5rem)] leading-none font-normal tracking-wide uppercase"
-                >
-                  {programaDetail.nombre}
-                </h1>
-
-                <div class="flex flex-wrap items-center justify-center gap-3">
-                  {programaDetail.tipoPrograma?.nombre && (
-                    <span class="bg-secondary text-neutral-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                      {programaDetail.tipoPrograma.nombre}
-                    </span>
-                  )}
-                  {programaDetail.modalidad?.nombre && (
-                    <span class="bg-neutral-white/10 text-neutral-white text-xs font-medium px-3 py-1 rounded-full border border-neutral-white/25">
-                      {programaDetail.modalidad.nombre}
-                    </span>
-                  )}
-                  {programaDetail.facultad?.nombre && (
-                    <span class="bg-neutral-white/10 text-neutral-white text-xs font-medium px-3 py-1 rounded-full border border-neutral-white/25">
-                      Facultad de {programaDetail.facultad.nombre}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- CONTENIDO PRINCIPAL -->
           <div class="container mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
               <div class="lg:col-span-2">
-                <!-- TABS -->
-                <div
-                  class="border-neutral-dark/10 flex items-center gap-1 overflow-x-auto no-scrollbar border-b"
-                  role="tablist"
-                  aria-label="Contenido del programa"
-                >
-                  <button
-                    type="button"
-                    role="tab"
-                    id="tab-informacion"
-                    aria-controls="panel-informacion"
-                    aria-selected="true"
-                    data-tab="informacion"
-                    class="border-secondary text-primary font-display shrink-0 border-b-[3px] px-4 py-3 text-sm tracking-wider uppercase transition-colors duration-200 sm:px-6 sm:text-base"
-                  >
-                    Información General
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    id="tab-plan"
-                    aria-controls="panel-plan"
-                    aria-selected="false"
-                    data-tab="plan"
-                    class="border-transparent text-neutral-dark/60 hover:text-primary font-display shrink-0 border-b-[3px] px-4 py-3 text-sm tracking-wider uppercase transition-colors duration-200 sm:px-6 sm:text-base"
-                  >
-                    Plan de Estudios
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    id="tab-inversion"
-                    aria-controls="panel-inversion"
-                    aria-selected="false"
-                    data-tab="inversion"
-                    class="border-transparent text-neutral-dark/60 hover:text-primary font-display shrink-0 border-b-[3px] px-4 py-3 text-sm tracking-wider uppercase transition-colors duration-200 sm:px-6 sm:text-base"
-                  >
-                    Resumen de Inversión
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    id="tab-lineas"
-                    aria-controls="panel-lineas"
-                    aria-selected="false"
-                    data-tab="lineas"
-                    class="border-transparent text-neutral-dark/60 hover:text-primary font-display shrink-0 border-b-[3px] px-4 py-3 text-sm tracking-wider uppercase transition-colors duration-200 sm:px-6 sm:text-base"
-                  >
-                    Líneas de Investigación
-                  </button>
-                </div>
-
-                <div class="pt-8">
-                  <!-- PANEL: INFORMACIÓN GENERAL -->
-                  <div id="panel-informacion" role="tabpanel" aria-labelledby="tab-informacion" data-panel="informacion">
-                    <section class="bg-white p-8  shadow-md border border-gray-100">
-                      <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
-                        Objetivo General
-                      </h2>
-                      <p class="border-secondary bg-primary/5 text-neutral-dark border-l-4 p-5 text-base leading-relaxed sm:text-lg">
-                        {programaDetail.objetivoGeneral || "Sin descripción disponible."}
-                      </p>
-                    </section>
-
-                    <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <section class="bg-white p-8  shadow-md border border-gray-100">
-                        <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
-                          Objetivos Específicos
-                        </h3>
-                        <p class="text-neutral-dark text-sm leading-relaxed whitespace-pre-line">
-                          {programaDetail.objetivosEspecificos || "Sin datos especificados."}
-                        </p>
-                      </section>
-
-                      <section class="bg-white p-8  shadow-md border border-gray-100">
-                        <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
-                          Perfil del Posgraduado
-                        </h3>
-                        <p class="text-neutral-dark text-sm leading-relaxed whitespace-pre-line">
-                          {programaDetail.perfilPosgraduado || "Sin datos especificados."}
-                        </p>
-                      </section>
-                    </div>
-                  </div>
-
-                  <!-- PANEL: PLAN DE ESTUDIOS -->
-                  <div id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" data-panel="plan" hidden>
-                    <section class="bg-white p-8  shadow-md border border-gray-100">
-                      <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
-                        Plan de Estudios
-                      </h2>
-
-                      {programaDetail.planEstudios && programaDetail.planEstudios.length > 0 ? (
-                        <div class="space-y-10">
-                          {programaDetail.planEstudios.map((periodoBloque) => (
-                            <div>
-                              <h3 class="bg-primary/10 text-primary inline-block  px-4 py-2 text-lg font-semibold mb-4">
-                                {periodoBloque.periodo?.nombre ?? "Periodo"}
-                              </h3>
-
-                              <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm border-collapse">
-                                  <thead>
-                                    <tr class="bg-primary text-neutral-white">
-                                      <th class="py-3 px-4 font-medium">Asignatura</th>
-                                      <th class="py-3 px-4 text-center font-medium">Tipo</th>
-                                      <th class="py-3 px-4 text-center font-medium">Créditos</th>
-                                      {periodoBloque.periodo.id !== 7 && (
-                                        <th class="py-3 px-4 text-right font-medium">Costo</th>
-                                      )}
-                                    </tr>
-                                  </thead>
-                                  <tbody class="divide-y divide-gray-100">
-                                    {periodoBloque.cursos?.map((curso) => (
-                                      <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="text-neutral-dark py-3 px-4 font-medium">
-                                          {curso.asignatura?.nombre ?? "Asignatura no especificada"}
-                                        </td>
-                                        <td class="py-3 px-4 text-center">
-                                          <span class="bg-gray-100 text-neutral-dark inline-block  px-2 py-0.5 text-xs font-semibold">
-                                            {curso.categoria?.nombre ?? "N/A"}
-                                          </span>
-                                        </td>
-                                        <td class="text-neutral-dark py-3 px-4 text-center">
-                                          {curso.creditos ?? 0} crd.
-                                        </td>
-                                        {periodoBloque.periodo.id !== 7 && (
-                                          <td class="text-neutral-dark py-3 px-4 text-right font-medium">
-                                          {formatMoney(curso.costo)}
-                                        </td>
-                                        )}
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p class="text-neutral-dark italic">No hay asignaturas registradas actualmente.</p>
-                      )}
-                    </section>
-                  </div>
-
-                  <!-- PANEL: RESUMEN DE INVERSIÓN -->
-                  <div id="panel-inversion" role="tabpanel" aria-labelledby="tab-inversion" data-panel="inversion" hidden>
-                    <section class="bg-white p-8  shadow-md border border-gray-100">
-                      <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
-                        Resumen de Inversión
-                      </h2>
-
-                      <div class="space-y-4 mb-6 text-sm">
-                        <div class="border-neutral-dark/10 flex justify-between items-center border-b py-3">
-                          <span class="text-neutral-dark/70">Matrícula por periodo:</span>
-                          <span class="text-neutral-dark font-semibold">
-                            {formatMoney(programaDetail.inversion?.costoMatricula)}
-                          </span>
-                        </div>
-
-                        <div class="border-neutral-dark/10 flex justify-between items-center border-b py-3">
-                          <span class="text-neutral-dark/70">Cantidad de matrículas:</span>
-                          <span class="text-neutral-dark font-semibold">
-                            {programaDetail.inversion?.cantidadMatriculas ?? 0}
-                          </span>
-                        </div>
-
-                        <div class="border-neutral-dark/10 flex justify-between items-center border-b py-3">
-                          <span class="text-neutral-dark/70">Costo total de cursos:</span>
-                          <span class="text-neutral-dark font-semibold">
-                            {formatMoney(programaDetail.inversion?.sumaCostosCursos)}
-                          </span>
-                        </div>
-
-                        <div class="bg-secondary text-neutral-white  p-6 mt-6">
-                          <span class="block text-xs font-semibold uppercase tracking-wider mb-2">
-                            Inversión Total Estimada
-                          </span>
-                          <span class="font-display text-3xl leading-none tracking-wide uppercase">
-                            {formatMoney(programaDetail.inversion?.inversionTotal)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        class="font-display bg-secondary hover:bg-primary text-neutral-white min-h-12 w-full px-6 py-3 text-sm tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98]"
-                      >
-                        Postular Ahora
-                      </button>
-
-                      <p class="text-neutral-dark/50 mt-3 text-center text-xs">
-                        Los costos están sujetos a variaciones según el reglamento institucional.
-                      </p>
-                    </section>
-                  </div>
-
-                  <!-- PANEL: LÍNEAS DE INVESTIGACIÓN -->
-                  <div id="panel-lineas" role="tabpanel" aria-labelledby="tab-lineas" data-panel="lineas" hidden>
-                    <section class="bg-white p-8  shadow-md border border-gray-100">
-                      <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
-                        Líneas de Investigación
-                      </h2>
-
-                      {programaDetail.lineasInvestigacion && programaDetail.lineasInvestigacion.length > 0 ? (
-                        <ul class="space-y-4">
-                          {programaDetail.lineasInvestigacion.map((linea) => (
-                            <li class="border-neutral-dark/10 bg-primary/5 flex items-start gap-3 rounded-lg border p-4">
-                              <span class="bg-secondary mt-1.5 block size-2 shrink-0 rounded-full" aria-hidden="true"></span>
-                              <span class="text-neutral-dark font-medium">{linea}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p class="text-neutral-dark italic">Sin información disponible.</p>
-                      )}
-                    </section>
-                  </div>
-                </div>
+                <ProgramTabs programa={programaDetail} />
               </div>
 
-              <!-- SIDEBAR -->
               <div class="lg:col-span-1">
-                <aside class="top-8 sticky">
-                  <div class="border-neutral-dark/15 bg-white flex flex-col items-center gap-4  border-2 border-dashed p-10 text-center shadow-md">
-                    <Graduation class="text-secondary size-12" />
-                    <h3 class="font-display text-neutral-dark text-2xl tracking-wide uppercase">
-                      Por implementar
-                    </h3>
-                    <p class="text-neutral-dark/60 text-sm leading-relaxed">
-                      Esta sección se encontrará disponible próximamente.
-                    </p>
-                  </div>
-                </aside>
+                <CardPorImplementar />
               </div>
             </div>
           </div>
@@ -369,54 +72,3 @@ const formatMoney = (amount?: number) => {
     }
   </main>
 </Layout>
-
-<script>
-  const tabButtons = Array.from(
-    document.querySelectorAll<HTMLButtonElement>("[data-tab]")
-  );
-  const panels = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-panel]")
-  );
-
-  const selectTab = (tabName: string) => {
-    tabButtons.forEach((button) => {
-      const active = button.dataset.tab === tabName;
-      button.setAttribute("aria-selected", String(active));
-      button.classList.toggle("border-secondary", active);
-      button.classList.toggle("text-primary", active);
-      button.classList.toggle("border-transparent", !active);
-      button.classList.toggle("text-neutral-dark/60", !active);
-    });
-
-    panels.forEach((panel) => {
-      panel.hidden = panel.dataset.panel !== tabName;
-    });
-  };
-
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => selectTab(button.dataset.tab ?? ""));
-  });
-
-  const tablist = document.querySelector<HTMLElement>("[role='tablist']");
-
-  tablist?.addEventListener("keydown", (event) => {
-    const currentIndex = tabButtons.findIndex(
-      (button) => button.getAttribute("aria-selected") === "true"
-    );
-
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      const next = tabButtons[(currentIndex + 1) % tabButtons.length];
-      selectTab(next.dataset.tab ?? "");
-      next.focus();
-    }
-
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      const prev =
-        tabButtons[(currentIndex - 1 + tabButtons.length) % tabButtons.length];
-      selectTab(prev.dataset.tab ?? "");
-      prev.focus();
-    }
-  });
-</script>

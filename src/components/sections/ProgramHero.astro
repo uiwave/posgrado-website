@@ -1,0 +1,72 @@
+---
+import type { ProgramaResponse } from "@/types/api";
+
+interface Props {
+  programa: ProgramaResponse;
+}
+
+const { programa } = Astro.props;
+---
+
+<section
+  class="relative flex min-h-[45vh] w-full items-center justify-center overflow-hidden py-20 lg:py-28"
+>
+  <div class="absolute inset-0" aria-hidden="true">
+    <img
+      src={programa.imagen || programa.tipoPrograma?.imagenHero || ""}
+      alt=""
+      class="size-full object-cover object-top"
+    />
+    <div class="bg-neutral-black/60 absolute inset-0"></div>
+  </div>
+
+  <div class="relative z-10 container mx-auto w-full px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-5xl space-y-6 text-center">
+      <nav
+        aria-label="Breadcrumb"
+        class="text-neutral-white/70 text-xs tracking-[0.2em] uppercase sm:text-sm"
+      >
+        <a href="/" class="hover:text-neutral-white transition-colors duration-300">
+          Inicio
+        </a>
+        <span class="text-neutral-white/40 mx-2" aria-hidden="true">/</span>
+        {programa.tipoPrograma && (
+          <>
+            <a
+              href={`/${programa.tipoPrograma.slug}`}
+              class="hover:text-neutral-white transition-colors duration-300"
+            >
+              {programa.tipoPrograma.nombre}
+            </a>
+            <span class="text-neutral-white/40 mx-2" aria-hidden="true">/</span>
+          </>
+        )}
+        <span class="text-secondary">{programa.nombre}</span>
+      </nav>
+
+      <h1
+        class="text-neutral-white font-display text-[clamp(2.5rem,7vw,4.5rem)] leading-none font-normal tracking-wide uppercase"
+      >
+        {programa.nombre}
+      </h1>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        {programa.tipoPrograma?.nombre && (
+          <span class="bg-secondary text-neutral-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            {programa.tipoPrograma.nombre}
+          </span>
+        )}
+        {programa.modalidad?.nombre && (
+          <span class="bg-neutral-white/10 text-neutral-white text-xs font-medium px-3 py-1 rounded-full border border-neutral-white/25">
+            {programa.modalidad.nombre}
+          </span>
+        )}
+        {programa.facultad?.nombre && (
+          <span class="bg-neutral-white/10 text-neutral-white text-xs font-medium px-3 py-1 rounded-full border border-neutral-white/25">
+            Facultad de {programa.facultad.nombre}
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

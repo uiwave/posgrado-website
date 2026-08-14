@@ -1,0 +1,74 @@
+---
+import type { PlanEstudioPorPeriodo } from "@/types/api";
+import { formatMoney } from "@/lib/money";
+
+interface Props {
+  planEstudios: PlanEstudioPorPeriodo[];
+}
+
+const { planEstudios } = Astro.props;
+---
+
+<section class="bg-white p-8 shadow-md border border-gray-100">
+  <h2
+    class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6"
+  >
+    Plan de Estudios
+  </h2>
+
+  {
+    planEstudios && planEstudios.length > 0 ? (
+      <div class="space-y-10">
+        {planEstudios.map((periodoBloque) => (
+          <div>
+            <h3 class="bg-primary/10 text-primary inline-block px-4 py-2 text-lg font-semibold mb-4">
+              {periodoBloque.periodo?.nombre ?? "Periodo"}
+            </h3>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr class="bg-primary text-neutral-white">
+                    <th class="py-3 px-4 font-medium">Asignatura</th>
+                    <th class="py-3 px-4 text-center font-medium">Tipo</th>
+                    <th class="py-3 px-4 text-center font-medium">Créditos</th>
+                    {periodoBloque.periodo.id !== 7 && (
+                      <th class="py-3 px-4 text-right font-medium">Costo</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  {periodoBloque.cursos?.map((curso) => (
+                    <tr class="hover:bg-gray-50 transition-colors">
+                      <td class="text-neutral-dark py-3 px-4 font-medium">
+                        {curso.asignatura?.nombre ??
+                          "Asignatura no especificada"}
+                      </td>
+                      <td class="py-3 px-4 text-center">
+                        <span class="bg-gray-100 text-neutral-dark inline-block px-2 py-0.5 text-xs font-semibold">
+                          {curso.categoria?.nombre ?? "N/A"}
+                        </span>
+                      </td>
+                      <td class="text-neutral-dark py-3 px-4 text-center">
+                        {curso.creditos ?? 0} crd.
+                      </td>
+                      {periodoBloque.periodo.id !== 7 && (
+                        <td class="text-neutral-dark py-3 px-4 text-right font-medium">
+                          {formatMoney(curso.costo)}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="text-neutral-dark italic">
+        No hay asignaturas registradas actualmente.
+      </p>
+    )
+  }
+</section>

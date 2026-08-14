@@ -1,0 +1,137 @@
+---
+import type { ProgramaResponse } from "@/types/api";
+import { CLASE_TAB, CLASE_TAB_ACTIVO } from "./tabs-programa";
+import PanelInformacionGeneral from "@/components/ui/PanelInformacionGeneral.astro";
+import PanelPlanEstudios from "@/components/ui/PanelPlanEstudios.astro";
+import PanelResumenInversion from "@/components/ui/PanelResumenInversion.astro";
+import PanelLineasInvestigacion from "@/components/ui/PanelLineasInvestigacion.astro";
+
+interface Props {
+  programa: ProgramaResponse;
+}
+
+const { programa } = Astro.props;
+
+const TABS = [
+  { id: "informacion", label: "Información General" },
+  { id: "plan", label: "Plan de Estudios" },
+  { id: "inversion", label: "Resumen de Inversión" },
+  { id: "lineas", label: "Líneas de Investigación" },
+] as const;
+---
+
+<div
+  class="border-neutral-dark/10 flex items-center gap-1 overflow-x-auto no-scrollbar border-b"
+  role="tablist"
+  aria-label="Contenido del programa"
+>
+  {
+    TABS.map((tab, index) => (
+      <button
+        type="button"
+        role="tab"
+        id={`tab-${tab.id}`}
+        aria-controls={`panel-${tab.id}`}
+        aria-selected={index === 0 ? "true" : "false"}
+        data-tab={tab.id}
+        class:list={[index === 0 ? CLASE_TAB_ACTIVO : CLASE_TAB]}
+      >
+        {tab.label}
+      </button>
+    ))
+  }
+</div>
+
+<div class="pt-8">
+  <div
+    id="panel-informacion"
+    role="tabpanel"
+    aria-labelledby="tab-informacion"
+    data-panel="informacion"
+  >
+    <PanelInformacionGeneral programa={programa} />
+  </div>
+
+  <div
+    id="panel-plan"
+    role="tabpanel"
+    aria-labelledby="tab-plan"
+    data-panel="plan"
+    hidden
+  >
+    <PanelPlanEstudios planEstudios={programa.planEstudios} />
+  </div>
+
+  <div
+    id="panel-inversion"
+    role="tabpanel"
+    aria-labelledby="tab-inversion"
+    data-panel="inversion"
+    hidden
+  >
+    <PanelResumenInversion inversion={programa.inversion} />
+  </div>
+
+  <div
+    id="panel-lineas"
+    role="tabpanel"
+    aria-labelledby="tab-lineas"
+    data-panel="lineas"
+    hidden
+  >
+    <PanelLineasInvestigacion
+      lineasInvestigacion={programa.lineasInvestigacion}
+    />
+  </div>
+</div>
+
+<script>
+  const tabButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-tab]"),
+  );
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-panel]"),
+  );
+
+  const selectTab = (tabName: string) => {
+    tabButtons.forEach((button) => {
+      const active = button.dataset.tab === tabName;
+      button.setAttribute("aria-selected", String(active));
+      button.classList.toggle("border-secondary", active);
+      button.classList.toggle("text-primary", active);
+      button.classList.toggle("border-transparent", !active);
+      button.classList.toggle("text-neutral-dark/60", !active);
+    });
+
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.panel !== tabName;
+    });
+  };
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => selectTab(button.dataset.tab ?? ""));
+  });
+
+  const tablist = document.querySelector<HTMLElement>("[role='tablist']");
+
+  tablist?.addEventListener("keydown", (event) => {
+    const currentIndex = tabButtons.findIndex(
+      (button) => button.getAttribute("aria-selected") === "true",
+    );
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      const next = tabButtons[(currentIndex + 1) % tabButtons.length];
+      selectTab(next.dataset.tab ?? "");
+      next.focus();
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      const prev =
+        tabButtons[(currentIndex - 1 + tabButtons.length) % tabButtons.length];
+      selectTab(prev.dataset.tab ?? "");
+      prev.focus();
+    }
+  });
+</script>
