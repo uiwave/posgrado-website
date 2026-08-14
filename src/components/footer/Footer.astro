@@ -1,0 +1,100 @@
+---
+import Logo from "@/assets/icons/logo.svg";
+import { siteConfig } from "@/config/site";
+import { ROUTES } from "@/constants/routes";
+
+const NAV_LINKS = [
+  { label: "Inicio", href: ROUTES.HOME },
+  { label: "Programas", href: "/#tipo-section-id" },
+  { label: "Comunicados", href: "/#comunicados" },
+  { label: "Admisión", href: ROUTES.ADMISION },
+];
+
+const CONTACT = [
+  { label: "Dirección", value: "Av. de la Cultura 733, Cusco, Perú" },
+  { label: "Correo", value: "posgrado@unsaac.edu.pe" },
+  { label: "Teléfono", value: "+51 84 223000" },
+];
+---
+
+<footer id="contacto" class="bg-primary text-neutral-white w-full">
+  <div class="container mx-auto w-full px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
+      <div class="space-y-6 lg:col-span-5">
+        <a href={ROUTES.HOME} class="flex items-center gap-3" aria-label="Escuela de Posgrado UNSAAC — Inicio">
+          <Logo class="size-12 shrink-0 sm:size-14" />
+          <span class="font-display text-base leading-tight tracking-wide uppercase sm:text-lg">
+            Escuela de Posgrado
+            <span class="text-secondary block">UNSAAC</span>
+          </span>
+        </a>
+
+        <p class="text-neutral-white/70 max-w-md text-sm leading-relaxed font-medium sm:text-base">
+          Especialízate, investiga y transforma tu experiencia profesional con
+          una formación de posgrado respaldada por la Universidad Nacional de
+          San Antonio Abad del Cusco.
+        </p>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h3 class="font-display text-neutral-white text-sm tracking-[0.2em] uppercase">
+          Enlaces
+        </h3>
+
+        <ul class="mt-6 space-y-3">
+          {
+            NAV_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-neutral-white/70 text-sm font-medium transition-colors duration-300 hover:text-secondary sm:text-base"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="lg:col-span-4">
+        <h3 class="font-display text-neutral-white text-sm tracking-[0.2em] uppercase">
+          Contacto
+        </h3>
+
+        <ul class="mt-6 space-y-3">
+          {
+            CONTACT.map((item) => (
+              <li class="text-sm font-medium sm:text-base">
+                <span class="text-neutral-white/50 block text-xs tracking-[0.15em] uppercase">
+                  {item.label}
+                </span>
+                <span class="text-neutral-white/85">{item.value}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          siteConfig.features.procesoAdmision && (
+            <a
+              href={ROUTES.ADMISION}
+              class="font-display bg-neutral-white text-primary mt-8 inline-flex items-center justify-center tracking-[0.12em] uppercase transition-all duration-300 ease-out active:scale-[0.98] hover:bg-secondary hover:text-neutral-white min-h-10 px-6 text-sm"
+            >
+              Admisión 2026
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="border-neutral-white/15 border-t">
+    <div
+      class="text-neutral-white/60 container mx-auto flex w-full flex-col items-center justify-between gap-3 px-4 py-6 text-center text-xs tracking-[0.15em] uppercase sm:flex-row sm:px-6 sm:text-left lg:px-8"
+    >
+      <p>© 2026 Escuela de Posgrado · UNSAAC</p>
+      <p>Universidad Nacional de San Antonio Abad del Cusco</p>
+    </div>
+  </div>
+</footer>

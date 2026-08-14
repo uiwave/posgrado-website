@@ -1,0 +1,125 @@
+---
+import X from "@/assets/icons/x.svg";
+import Facebook from "@/assets/icons/facebook.svg";
+import Logo from "@/assets/icons/logo.svg";
+import { navigationData } from "@/data/navigation";
+import MenuColumn from "./MenuColumn.astro";
+---
+
+<div
+    id="full-menu"
+    class="hero__overlay fixed inset-0 z-50 flex h-dvh flex-col transition-opacity duration-500 hidden-menu"
+>
+    <div class="bg-neutral-black/85 absolute inset-0" aria-hidden="true"></div>
+
+    <div
+        class="container-page relative z-10 flex h-full min-h-0 flex-col py-6 sm:py-8 lg:py-10 xl:py-12"
+    >
+        <div class="flex shrink-0 items-center justify-between">
+            <a
+                href="/"
+                aria-label="Ir al inicio"
+                class="inline-flex items-center"
+            >
+                <Logo class="text-neutral-white h-10 w-auto object-contain sm:h-12 lg:h-14" />
+            </a>
+            <button
+                id="close-menu-btn"
+                type="button"
+                aria-label="Cerrar menú"
+                class="group grid size-11 shrink-0 place-items-center rounded-full bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-black sm:size-12 lg:size-14"
+            >
+                <X
+                    class="size-5 transition-transform duration-300 group-hover:rotate-90 sm:size-6"
+                />
+            </button>
+        </div>
+
+        <nav
+            class="min-h-0 flex-1 overflow-y-auto py-10 sm:py-12 lg:flex lg:items-center lg:py-16"
+        >
+            <div
+                class="grid w-full grid-cols-1 gap-y-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-0 xl:gap-x-12"
+            >
+                {
+                    navigationData.map((section) => (
+                        <MenuColumn section={section} />
+                    ))
+                }
+            </div>
+        </nav>
+
+        <div
+            class="shrink-0 border-t border-white/15 pt-5 sm:pt-6 lg:flex lg:items-center lg:justify-between"
+        >
+            <p
+                class="text-neutral-white/60 mb-3 text-[11px] tracking-[0.12em] uppercase sm:text-xs lg:mb-0"
+            >
+                Síguenos en nuestras redes sociales
+            </p>
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    class="grid size-9 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-white hover:text-black sm:size-10"
+                >
+                    <Facebook class="size-4 sm:size-4.5" />
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero__overlay {
+        background-image: url("/images/banner.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+</style>
+
+<script>
+    import { $ } from "@/lib/dom";
+
+    const openBtn = $<HTMLButtonElement>("#open-menu-btn");
+    const closeBtn = $<HTMLButtonElement>("#close-menu-btn");
+    const fullMenu = $<HTMLDivElement>("#full-menu");
+
+    function setupNavigation() {
+        if (openBtn?.dataset.bound === "true") return;
+        openBtn?.setAttribute("data-bound", "true");
+
+        function toggleMenu() {
+            if (!fullMenu) return;
+            const isHidden = fullMenu.classList.contains("hidden-menu");
+
+            if (isHidden) {
+                fullMenu.classList.remove("hidden-menu");
+                fullMenu.classList.add("active-menu");
+                document.body.style.overflow = "hidden";
+            } else {
+                fullMenu.classList.remove("active-menu");
+                fullMenu.classList.add("hidden-menu");
+                document.body.style.overflow = "";
+            }
+        }
+
+        openBtn?.addEventListener("click", toggleMenu);
+        closeBtn?.addEventListener("click", toggleMenu);
+
+        document.addEventListener("keydown", (e) => {
+            if (
+                e.key === "Escape" &&
+                fullMenu?.classList.contains("active-menu")
+            ) {
+                toggleMenu();
+            }
+        });
+    }
+
+    setupNavigation();
+    document.addEventListener("astro:page-load", setupNavigation);
+</script>

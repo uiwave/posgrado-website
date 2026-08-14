@@ -68,6 +68,12 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         overflow-x: clip;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar {
+        display: none;
     }
 
     body {
@@ -91,5 +97,19 @@
 
     .no-scrollbar::-webkit-scrollbar {
         display: none;
+    }
+
+    .container-page {
+        @apply container mx-auto w-full px-4 sm:px-6 lg:px-8;
+    }
+
+    .hidden-menu {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .active-menu {
+        opacity: 1;
+        pointer-events: auto;
     }
 }
