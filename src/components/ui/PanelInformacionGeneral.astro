@@ -6,33 +6,89 @@ interface Props {
 }
 
 const { programa } = Astro.props;
+
+const convertirLineas = (texto?: string) =>
+  texto
+    ?.replaceAll("\\n", "\n")
+    .split("\n")
+    .map((linea) => linea.trim())
+    .filter(Boolean) ?? [];
 ---
 
 <section class="bg-white p-8 shadow-md border border-gray-100">
-  <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
+  <h2
+    class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6"
+  >
     Objetivo General
   </h2>
-  <p class="border-secondary bg-primary/5 text-neutral-dark border-l-4 p-5 text-base leading-relaxed sm:text-lg">
+
+  <p
+    class="border-secondary bg-primary/5 text-neutral-dark border-l-4 p-5 text-base leading-relaxed sm:text-lg whitespace-pre-line"
+  >
     {programa.objetivoGeneral || "Sin descripción disponible."}
   </p>
 </section>
 
 <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
   <section class="bg-white p-8 shadow-md border border-gray-100">
-    <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
+    <h3
+      class="font-display text-secondary text-lg tracking-wide uppercase mb-3"
+    >
       Objetivos Específicos
     </h3>
-    <p class="text-neutral-dark text-sm leading-relaxed whitespace-pre-line">
-      {programa.objetivosEspecificos || "Sin datos especificados."}
-    </p>
+
+    <ul class="space-y-4">
+      {
+        convertirLineas(programa.objetivosEspecificos).length > 0 ? (
+          convertirLineas(programa.objetivosEspecificos).map((objetivo) => (
+            <li class="flex items-start gap-3">
+              <span
+                class="bg-secondary mt-1.5 block size-2 shrink-0"
+                aria-hidden="true"
+              ></span>
+
+              <span class="text-neutral-dark text-sm leading-relaxed">
+                {objetivo}
+              </span>
+            </li>
+          ))
+        ) : (
+          <li class="text-neutral-dark text-sm">
+            Sin datos especificados.
+          </li>
+        )
+      }
+    </ul>
   </section>
 
   <section class="bg-white p-8 shadow-md border border-gray-100">
-    <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
+    <h3
+      class="font-display text-secondary text-lg tracking-wide uppercase mb-3"
+    >
       Perfil del Posgraduado
     </h3>
-    <p class="text-neutral-dark text-sm leading-relaxed whitespace-pre-line">
-      {programa.perfilPosgraduado || "Sin datos especificados."}
-    </p>
+
+    <ul class="space-y-4">
+      {
+        convertirLineas(programa.perfilPosgraduado).length > 0 ? (
+          convertirLineas(programa.perfilPosgraduado).map((perfil) => (
+            <li class="flex items-start gap-3">
+              <span
+                class="bg-secondary mt-1.5 block size-2 shrink-0"
+                aria-hidden="true"
+              ></span>
+
+              <span class="text-neutral-dark text-sm leading-relaxed">
+                {perfil}
+              </span>
+            </li>
+          ))
+        ) : (
+          <li class="text-neutral-dark text-sm">
+            Sin datos especificados.
+          </li>
+        )
+      }
+    </ul>
   </section>
 </div>

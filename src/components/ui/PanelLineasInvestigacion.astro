@@ -1,26 +1,38 @@
 ---
 interface Props {
-  lineasInvestigacion?: string[];
+  lineasInvestigacion?: string;
 }
 
-const { lineasInvestigacion = [] } = Astro.props;
+const { lineasInvestigacion } = Astro.props;
+
+const lineas = lineasInvestigacion
+  ?.replaceAll("\\n", "\n")
+  .split("\n")
+  .map((linea) => linea.trim())
+  .filter(Boolean) ?? [];
 ---
 
 <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
-  <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
+  <h2
+    class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6"
+  >
     Líneas de Investigación
   </h2>
 
-  {lineasInvestigacion.length > 0 ? (
-    <ul class="space-y-4">
-      {lineasInvestigacion.map((linea) => (
-        <li class="border-neutral-dark/10 bg-primary/5 flex items-start gap-3 rounded-lg border p-4">
-          <span class="bg-secondary mt-1.5 block size-2 shrink-0 rounded-full" aria-hidden="true"></span>
-          <span class="text-neutral-dark font-medium">{linea}</span>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p class="text-neutral-dark italic">Sin información disponible.</p>
-  )}
+  <ul class="space-y-4">
+    {lineas.map((linea) => (
+      <li
+        class="border-neutral-dark/10 bg-primary/5 flex items-start gap-3 border p-4"
+      >
+        <span
+          class="bg-secondary mt-1.5 block size-2 shrink-0"
+          aria-hidden="true"
+        ></span>
+
+        <span class="text-neutral-dark font-medium">
+          {linea}
+        </span>
+      </li>
+    ))}
+  </ul>
 </section>
