@@ -60,6 +60,7 @@ export interface ProgramaResponse {
   tipoPrograma: TipoProgramaResponse;
   inversion: Inversion;
   planEstudios: PlanEstudioPorPeriodo[];
+  lineasInvestigacion?: string[];
 }
 
 // Reutiliza omitiendo los campos que no vienen en el listado
