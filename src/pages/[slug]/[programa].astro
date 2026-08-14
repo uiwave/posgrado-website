@@ -44,7 +44,7 @@ const formatMoney = (amount?: number) => {
       errorMensaje || !programaDetail ? (
         <div class="max-w-3xl mx-auto pt-20 px-6 text-center">
           <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+            <div class="w-16 h-16 bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
               !
             </div>
             <h1 class="text-2xl font-bold text-gray-900 mb-2">
@@ -129,7 +129,7 @@ const formatMoney = (amount?: number) => {
               <div class="lg:col-span-2">
                 <!-- TABS -->
                 <div
-                  class="border-neutral-dark/10 flex items-center gap-1 overflow-x-auto no-scrollbar border-b-2"
+                  class="border-neutral-dark/10 flex items-center gap-1 overflow-x-auto no-scrollbar border-b"
                   role="tablist"
                   aria-label="Contenido del programa"
                 >
@@ -182,7 +182,7 @@ const formatMoney = (amount?: number) => {
                 <div class="pt-8">
                   <!-- PANEL: INFORMACIÓN GENERAL -->
                   <div id="panel-informacion" role="tabpanel" aria-labelledby="tab-informacion" data-panel="informacion">
-                    <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <section class="bg-white p-8  shadow-md border border-gray-100">
                       <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
                         Objetivo General
                       </h2>
@@ -192,7 +192,7 @@ const formatMoney = (amount?: number) => {
                     </section>
 
                     <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-                      <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                      <section class="bg-white p-8  shadow-md border border-gray-100">
                         <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
                           Objetivos Específicos
                         </h3>
@@ -201,7 +201,7 @@ const formatMoney = (amount?: number) => {
                         </p>
                       </section>
 
-                      <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                      <section class="bg-white p-8  shadow-md border border-gray-100">
                         <h3 class="font-display text-secondary text-lg tracking-wide uppercase mb-3">
                           Perfil del Posgraduado
                         </h3>
@@ -214,7 +214,7 @@ const formatMoney = (amount?: number) => {
 
                   <!-- PANEL: PLAN DE ESTUDIOS -->
                   <div id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" data-panel="plan" hidden>
-                    <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <section class="bg-white p-8  shadow-md border border-gray-100">
                       <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
                         Plan de Estudios
                       </h2>
@@ -223,7 +223,7 @@ const formatMoney = (amount?: number) => {
                         <div class="space-y-10">
                           {programaDetail.planEstudios.map((periodoBloque) => (
                             <div>
-                              <h3 class="bg-primary/10 text-primary inline-block rounded-lg px-4 py-2 text-lg font-semibold mb-4">
+                              <h3 class="bg-primary/10 text-primary inline-block  px-4 py-2 text-lg font-semibold mb-4">
                                 {periodoBloque.periodo?.nombre ?? "Periodo"}
                               </h3>
 
@@ -234,7 +234,9 @@ const formatMoney = (amount?: number) => {
                                       <th class="py-3 px-4 font-medium">Asignatura</th>
                                       <th class="py-3 px-4 text-center font-medium">Tipo</th>
                                       <th class="py-3 px-4 text-center font-medium">Créditos</th>
-                                      <th class="py-3 px-4 text-right font-medium">Costo</th>
+                                      {periodoBloque.periodo.id !== 7 && (
+                                        <th class="py-3 px-4 text-right font-medium">Costo</th>
+                                      )}
                                     </tr>
                                   </thead>
                                   <tbody class="divide-y divide-gray-100">
@@ -244,16 +246,18 @@ const formatMoney = (amount?: number) => {
                                           {curso.asignatura?.nombre ?? "Asignatura no especificada"}
                                         </td>
                                         <td class="py-3 px-4 text-center">
-                                          <span class="bg-gray-100 text-neutral-dark inline-block rounded px-2 py-0.5 text-xs font-semibold">
+                                          <span class="bg-gray-100 text-neutral-dark inline-block  px-2 py-0.5 text-xs font-semibold">
                                             {curso.categoria?.nombre ?? "N/A"}
                                           </span>
                                         </td>
                                         <td class="text-neutral-dark py-3 px-4 text-center">
                                           {curso.creditos ?? 0} crd.
                                         </td>
-                                        <td class="text-neutral-dark py-3 px-4 text-right font-medium">
+                                        {periodoBloque.periodo.id !== 7 && (
+                                          <td class="text-neutral-dark py-3 px-4 text-right font-medium">
                                           {formatMoney(curso.costo)}
                                         </td>
+                                        )}
                                       </tr>
                                     ))}
                                   </tbody>
@@ -270,7 +274,7 @@ const formatMoney = (amount?: number) => {
 
                   <!-- PANEL: RESUMEN DE INVERSIÓN -->
                   <div id="panel-inversion" role="tabpanel" aria-labelledby="tab-inversion" data-panel="inversion" hidden>
-                    <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <section class="bg-white p-8  shadow-md border border-gray-100">
                       <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
                         Resumen de Inversión
                       </h2>
@@ -297,7 +301,7 @@ const formatMoney = (amount?: number) => {
                           </span>
                         </div>
 
-                        <div class="bg-secondary text-neutral-white rounded-xl p-6 mt-6">
+                        <div class="bg-secondary text-neutral-white  p-6 mt-6">
                           <span class="block text-xs font-semibold uppercase tracking-wider mb-2">
                             Inversión Total Estimada
                           </span>
@@ -322,7 +326,7 @@ const formatMoney = (amount?: number) => {
 
                   <!-- PANEL: LÍNEAS DE INVESTIGACIÓN -->
                   <div id="panel-lineas" role="tabpanel" aria-labelledby="tab-lineas" data-panel="lineas" hidden>
-                    <section class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <section class="bg-white p-8  shadow-md border border-gray-100">
                       <h2 class="font-display text-primary text-[clamp(1.8rem,4vw,2.5rem)] leading-none tracking-wide uppercase mb-6">
                         Líneas de Investigación
                       </h2>
@@ -347,7 +351,7 @@ const formatMoney = (amount?: number) => {
               <!-- SIDEBAR -->
               <div class="lg:col-span-1">
                 <aside class="top-8 sticky">
-                  <div class="border-neutral-dark/15 bg-white flex flex-col items-center gap-4 rounded-xl border-2 border-dashed p-10 text-center shadow-md">
+                  <div class="border-neutral-dark/15 bg-white flex flex-col items-center gap-4  border-2 border-dashed p-10 text-center shadow-md">
                     <Graduation class="text-secondary size-12" />
                     <h3 class="font-display text-neutral-dark text-2xl tracking-wide uppercase">
                       Por implementar
