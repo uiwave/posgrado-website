@@ -1,272 +1,39 @@
 ---
-import CardProgram from "@/components/ui/CardProgram.astro";
-import Layout from "../layouts/Layout.astro";
-import { posgradoService } from "../services/api";
-import type {
-  PagedModel,
-  ProgramaListItemResponse,
-  TipoProgramaResponse,
-} from "../types/api";
-import HeroProgramSection from "@/components/sections/HeroProgramSection.astro"
+import Layout from "@/layouts/Layout.astro";
+import { posgradoService } from "@/services/api";
+import HeroProgramSection from "@/components/sections/HeroProgramSection.astro";
+import GridProgramasSection from "@/components/sections/GridProgramasSection.astro";
 
-// 1. Obtener el slug desde la URL
 const { slug } = Astro.params;
-
-// 2. Obtener query params de la URL (?q=busqueda&page=1&size=10)
-const url = new URL(Astro.request.url);
-const q = url.searchParams.get("q") || "";
-const pageParam = url.searchParams.get("page");
-const sizeParam = url.searchParams.get("size");
-
-// Validar que size sea estrictamente uno de los permitidos por la API: 5, 10 o 20
-const parsedSize = sizeParam ? parseInt(sizeParam, 10) : 10;
-const size = ([5, 10, 20].includes(parsedSize) ? parsedSize : 10) as 5 | 10 | 20;
-
-// Página para la UI (Base 1) y para la API (Base 0)
-const urlPage = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
-const apiPage = urlPage - 1;
-
-let programasData: PagedModel<ProgramaListItemResponse> | null = null;
-let tiposPrograma: TipoProgramaResponse[] = [];
-let errorMensaje = "";
-
-try {
-  if (slug) {
-    programasData = await posgradoService.getProgramasPorTipo(slug, {
-      q: q.trim() ? q.trim() : undefined,
-      page: apiPage,
-      size,
-    });
-    tiposPrograma = await posgradoService.getTiposPrograma();
-  }
-} catch (error) {
-  console.error(`Error al cargar programas para ${slug}:`, error);
-  errorMensaje = "No se pudieron obtener los programas para esta categoría.";
-}
 
 if (!slug) {
   return Astro.redirect("/404");
 }
 
-// Helper para construir URLs de paginación
-const buildPageUrl = (targetPage: number, newSize?: number) => {
-  const params = new URLSearchParams();
-  if (q.trim()) params.set("q", q.trim());
-  
-  // Usamos el tamaño enviado o mantenemos el actual
-  const activeSize = newSize ?? size;
-  
-  if (targetPage > 1) {
-    params.set("page", targetPage.toString());
-  }
-  if (activeSize !== 10) {
-    params.set("size", activeSize.toString());
-  }
+let tipoPrograma;
 
-  const queryString = params.toString();
-  return `/${slug}${queryString ? `?${queryString}` : ""}`;
-};
+try {
+  tipoPrograma = await posgradoService.getTipoProgramaBySlug(slug);
+} catch (error) {
+  console.error("Error al cargar los tipos de programa:", error);
+}
 
+if (!tipoPrograma) {
+  return Astro.redirect("/404");
+}
 
-const tituloCategoria = slug.replace(/-/g, " ");
-const tipoActual = tiposPrograma.find((t) => t.slug === slug);
-const heroTitulo = tipoActual?.nombre ?? tituloCategoria;
-const heroImagen = tipoActual?.imagenHero ?? "/images/banner.jpg";
+const tituloCategoria = tipoPrograma?.nombre
+const heroImagen = tipoPrograma?.imagenHero;
 ---
 
 <Layout title={`Programas de ${tituloCategoria}`}>
-  <HeroProgramSection programa={{ titulo: heroTitulo, imagen: heroImagen }} />
-  <main class="max-w-7xl mx-auto px-6 py-12">
-    <!-- Encabezado y Buscador -->
-    <header class="mb-8">
-      <a
-        href="/"
-        class="text-blue-600 hover:underline text-sm mb-4 inline-flex items-center gap-1"
-      >
-        &larr; Volver al inicio
-      </a>
-
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-2">
-        <h1 class="text-3xl font-bold text-gray-900 capitalize">
-          Programas de {tituloCategoria}
-        </h1>
-
-        <!-- Formulario del Buscador -->
-        <form method="GET" class="flex items-center gap-2 w-full md:w-auto">
-          <!-- Mantiene el parámetro 'size' en la búsqueda -->
-          {size !== 10 && <input type="hidden" name="size" value={size} />}
-          
-          <div class="relative w-full md:w-80">
-            <input
-              type="text"
-              name="q"
-              value={q}
-              placeholder="Buscar por nombre..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-            <svg
-              class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
-          </div>
-
-          <button
-            type="submit"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors shrink-0"
-          >
-            Buscar
-          </button>
-
-          {
-            q && (
-              <a
-                href={`/${slug}`}
-                class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-3 py-2 rounded-lg text-sm transition-colors shrink-0"
-                title="Limpiar búsqueda"
-              >
-                Limpiar
-              </a>
-            )
-          }
-        </form>
-      </div>
-    </header>
-
-    <!-- Indicador de Búsqueda Activa -->
-    {
-      q && (
-        <div class="mb-6 text-sm text-gray-600 flex items-center gap-1">
-          <span>Resultados para:</span>
-          <span class="font-bold text-gray-900">"{q}"</span>
-        </div>
-      )
-    }
-
-    <!-- Banner de Error -->
-    {
-      errorMensaje && (
-        <div
-          class="bg-red-50 border border-red-400 text-red-800 p-4 rounded-lg text-center my-6 max-w-xl mx-auto"
-          role="alert"
-        >
-          <p class="font-medium">{errorMensaje}</p>
-        </div>
-      )
-    }
-
-    <!-- Grilla de Programas -->
-    {
-      programasData && programasData.content.length > 0 ? (
-        <>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {programasData.content.map((programa) => (
-             <CardProgram programa={programa}/>
-            ))}
-          </div>
-
-          <!-- CONTROLES DE PAGINACIÓN Y TAMAÑO -->
-          <nav
-            class="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-200 pt-6"
-            aria-label="Paginación"
-          >
-            <!-- Selector de Cantidad de Ítems (5, 10, 20) -->
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-              <label for="size-select" class="whitespace-nowrap">Mostrar por página:</label>
-              <select
-                id="size-select"
-                class="border border-gray-300 rounded-lg px-2.5 py-1.5 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm cursor-pointer"
-                onchange="window.location.href = this.value"
-              >
-                {[5, 10, 20].map((s) => (
-                  <option
-                    value={buildPageUrl(1, s)}
-                    selected={s === size}
-                  >
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <!-- Info de Registros -->
-            <div class="text-sm text-gray-600">
-              Página <span class="font-bold text-gray-900">{urlPage}</span> de{" "}
-              <span class="font-bold text-gray-900">{programasData.page.totalPages}</span>{" "}
-              ({programasData.page.totalElements} resultados)
-            </div>
-
-            <!-- Botones de Navegación -->
-            <div class="flex items-center gap-2">
-              {/* Botón Anterior */}
-              {urlPage > 1 ? (
-                <a
-                  href={buildPageUrl(urlPage - 1)}
-                  class="px-3.5 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-                >
-                  &larr; Anterior
-                </a>
-              ) : (
-                <span class="px-3.5 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed">
-                  &larr; Anterior
-                </span>
-              )}
-
-              {/* Números de Página */}
-              <div class="hidden md:flex items-center gap-1">
-                {Array.from({ length: programasData.page.totalPages }).map((_, index) => {
-                  const pageNumber = index + 1;
-                  const isCurrent = pageNumber === urlPage;
-                  return (
-                    <a
-                      href={buildPageUrl(pageNumber)}
-                      class={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                        isCurrent
-                          ? "bg-blue-600 text-white font-bold"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      {pageNumber}
-                    </a>
-                  );
-                })}
-              </div>
-
-              {/* Botón Siguiente */}
-              {urlPage < programasData.page.totalPages ? (
-                <a
-                  href={buildPageUrl(urlPage + 1)}
-                  class="px-3.5 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-                >
-                  Siguiente &rarr;
-                </a>
-              ) : (
-                <span class="px-3.5 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed">
-                  Siguiente &rarr;
-                </span>
-              )}
-            </div>
-          </nav>
-        </>
-      ) : (
-        !errorMensaje && (
-          <div class="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-            <p class="text-gray-500 font-medium">
-              {q
-                ? `No se encontraron programas que coincidan con "${q}".`
-                : "No se encontraron programas disponibles para esta categoría."}
-            </p>
-          </div>
-        )
-      )
-    }
-  </main>
+  <HeroProgramSection titulo={tituloCategoria} imagen={heroImagen}/>
+  <GridProgramasSection slug={slug} />
 </Layout>
+
+<!-- <script define:vars={{ tipoPrograma }}>
+  console.log(
+    "🚀 [DevTools Browser] Lista de Tipos de Programa:",
+    tipoPrograma,
+  );
+</script> -->

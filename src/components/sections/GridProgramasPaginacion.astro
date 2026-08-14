@@ -1,0 +1,64 @@
+---
+import { CLASE_PAGINA_ACTIVO, CLASE_PAGINA } from "./paginacion-programas";
+
+interface Props {
+    urlPage: number;
+    totalPaginas: number;
+    buildPageUrl: (targetPage: number, newSize?: number) => string;
+}
+
+const { urlPage, totalPaginas, buildPageUrl } = Astro.props;
+---
+
+<nav
+    id="grid-nav"
+    hidden={totalPaginas <= 1}
+    aria-label="Paginación de programas"
+    class="flex items-center justify-center gap-2"
+>
+    {urlPage > 1 ? (
+        <a
+            href={buildPageUrl(urlPage - 1)}
+            class="border-neutral-light font-display text-neutral-dark hover:border-primary hover:text-primary inline-flex min-h-10 items-center justify-center border-2 px-4 text-sm tracking-[0.12em] uppercase transition-all duration-300"
+        >
+            Anterior
+        </a>
+    ) : (
+        <span
+            class="border-neutral-light font-display text-neutral-dark pointer-events-none inline-flex min-h-10 items-center justify-center border-2 px-4 text-sm tracking-[0.12em] uppercase opacity-40 transition-all duration-300"
+        >
+            Anterior
+        </span>
+    )}
+
+    <div id="grid-pages" class="flex items-center gap-2">
+        {Array.from({ length: totalPaginas }).map((_, indice) => {
+            const numeroPagina = indice + 1;
+            const activo = numeroPagina === urlPage;
+            return (
+                <a
+                    href={buildPageUrl(numeroPagina)}
+                    aria-current={activo ? "page" : undefined}
+                    class={activo ? CLASE_PAGINA_ACTIVO : CLASE_PAGINA}
+                >
+                    {numeroPagina}
+                </a>
+            );
+        })}
+    </div>
+
+    {urlPage < totalPaginas ? (
+        <a
+            href={buildPageUrl(urlPage + 1)}
+            class="border-neutral-light font-display text-neutral-dark hover:border-primary hover:text-primary inline-flex min-h-10 items-center justify-center border-2 px-4 text-sm tracking-[0.12em] uppercase transition-all duration-300"
+        >
+            Siguiente
+        </a>
+    ) : (
+        <span
+            class="border-neutral-light font-display text-neutral-dark pointer-events-none inline-flex min-h-10 items-center justify-center border-2 px-4 text-sm tracking-[0.12em] uppercase opacity-40 transition-all duration-300"
+        >
+            Siguiente
+        </span>
+    )}
+</nav>

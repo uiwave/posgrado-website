@@ -1,0 +1,35 @@
+---
+import type { ProgramaListItemResponse } from "@/types/api";
+
+interface Props {
+    programas: ProgramaListItemResponse[];
+}
+
+const { programas } = Astro.props;
+---
+
+<div
+    id="carreras-grid"
+    class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+>
+    {programas.map((programa) => (
+        <a
+            href={`/${programa.tipoPrograma?.slug ?? "programa"}/${programa.slug}`}
+            class="group relative flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1"
+        >
+            <div class="relative aspect-4/3 overflow-hidden">
+                <img
+                    src={programa.imagen}
+                    alt={programa.nombre}
+                    class="size-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                />
+            </div>
+
+            <div class="flex grow items-center p-5 sm:p-6">
+                <h3 class="font-display text-xl leading-tight tracking-wide uppercase sm:text-2xl">
+                    {programa.nombre}
+                </h3>
+            </div>
+        </a>
+    ))}
+</div>

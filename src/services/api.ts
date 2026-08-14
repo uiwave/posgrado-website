@@ -34,6 +34,10 @@ async function fetchAPI<T>(
 }
 
 export const posgradoService = {
+  // 0. Obtener Tipo programa por slug
+  getTipoProgramaBySlug: (slug: string) =>
+    fetchAPI<TipoProgramaResponse>(`/api/open/tipos-programa/${slug}`),
+
   // 1. Listar todos los tipos de programa
   getTiposPrograma: () =>
     fetchAPI<TipoProgramaResponse[]>("/api/open/tipos-programa"),
