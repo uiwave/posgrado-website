@@ -9,7 +9,7 @@ const { programa } = Astro.props;
 ---
 
 <a
-  href={`/programa/${programa.slug}`}
+  href={`/${programa.tipoPrograma?.slug ?? "programa"}/${programa.slug}`}
   class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col justify-between"
 >
   <div>

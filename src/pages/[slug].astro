@@ -24,12 +24,10 @@ if (!tipoPrograma) {
 
 const tituloCategoria = tipoPrograma?.nombre
 const heroImagen = tipoPrograma?.imagenHero;
-const data = slug
 ---
 
 <Layout title={`Programas de ${tituloCategoria}`}>
   <HeroProgramSection titulo={tituloCategoria} imagen={heroImagen}/>
-  {slug}
   <GridProgramasSection slug={slug} />
 </Layout>
 

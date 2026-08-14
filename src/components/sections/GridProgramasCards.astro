@@ -14,7 +14,7 @@ const { programas } = Astro.props;
 >
     {programas.map((programa) => (
         <a
-            href={`/programa/${programa.slug}`}
+            href={`/${programa.tipoPrograma?.slug ?? "programa"}/${programa.slug}`}
             class="group relative flex h-full flex-col overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1"
         >
             <div class="relative aspect-4/3 overflow-hidden">
